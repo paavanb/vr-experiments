@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "webpack --env=production",
+    "build": "webpack --env=production --stats-error-details",
     "deploy": "npm run build",
     "test": "tsc || eslint --ext=.tsx --ext=.ts . && jest --passWithNoTests",
     "fix": "prettier -w ."
