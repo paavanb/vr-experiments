@@ -1,7 +1,6 @@
 const getRepoInfo = require('git-repo-info')
 const webpack = require('webpack')
 const HTMLPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
 const gitInfo = getRepoInfo()
@@ -10,27 +9,23 @@ module.exports = (env) => {
   const isDev = env !== 'production'
   const mode = isDev ? 'development' : 'production'
   // When deploying to GH pages, the app will not be served at the root
-  const BASE_PATH = isDev ? '/' : '/webrtc-experiments'
+  const BASE_PATH = isDev ? '/' : '/vr-experiments'
   return {
     entry: `${__dirname}/src/index.tsx`,
     output: {
-      publicPath: BASE_PATH,
+      publicPath: '/',
     },
     target: 'web',
-    node: {
-      fs: 'empty',
-    },
     plugins: [
-      new MiniCssExtractPlugin({filename: isDev ? '[name].css' : '[name].[contenthash].css'}),
       new webpack.EnvironmentPlugin({GIT_REV: gitInfo.sha, NODE_ENV: mode, BASE_PATH}),
       new HTMLPlugin({
-        title: 'WebRTC Experiments',
+        title: 'VR Experiments',
         meta: {
           viewport: 'minimum-scale=1, initial-scale=1, width=device-width',
         },
         template: 'src/index.ejs',
       }),
-      new ReactRefreshPlugin({disableRefreshCheck: true}),
+      new ReactRefreshPlugin(),
     ].filter(Boolean),
     devtool: isDev ? 'cheap-module-source-map' : 'source-map',
     mode,
@@ -48,23 +43,22 @@ module.exports = (env) => {
           exclude: /node_modules/,
         },
         {
-          test: /\.css$/,
-          use: [MiniCssExtractPlugin.loader, 'css-loader'],
-        },
-        {
           test: /\.(eot|otf|svg|ttf|woff|woff2|gif)$/,
-          use: 'file-loader',
+          type: 'asset/resource',
         },
       ],
     },
     devServer: {
+      // WebXR requires HTTPS
+      https: true,
       historyApiFallback: true,
-      host: '0.0.0.0',
+      host: 'local-ipv4',
       hot: true,
       open: true,
-      stats: 'minimal',
-      // Support proxied requests within Docker
-      disableHostCheck: true,
+      devMiddleware: {
+        stats: 'minimal',
+      },
+      allowedHosts: 'all',
     },
   }
 }
