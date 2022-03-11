@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
+    "@babel/eslint-parser": "^7.17.0",
     "@kensho-technologies/eslint-config": "^22.0.0",
     "@kensho-technologies/prettier-config": "^1.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
