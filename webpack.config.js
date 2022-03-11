@@ -11,7 +11,7 @@ module.exports = (env) => {
   // When deploying to GH pages, the app will not be served at the root
   const BASE_PATH = isDev ? '/' : '/vr-experiments'
   return {
-    entry: `${__dirname}/src/index.tsx`,
+    entry: './src/index.tsx',
     output: {
       publicPath: '/',
     },
