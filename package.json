@@ -44,6 +44,7 @@
     "babel-preset-kensho": "^10.0.0",
     "css-loader": "^6.7.1",
     "eslint": "^7.21.0",
+    "eslint-plugin-import": "^2.25.4",
     "git-repo-info": "^2.1.0",
     "html-webpack-plugin": "^4.5.2",
     "jest": "^24.8.0",
