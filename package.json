@@ -11,7 +11,7 @@
     "start": "webpack-dev-server",
     "build": "webpack --env=production",
     "deploy": "npm run build",
-    "test": "tsc || eslint --ext=.tsx --ext=.ts . && jest",
+    "test": "tsc || eslint --ext=.tsx --ext=.ts . && jest --passWithNoTests",
     "fix": "prettier -w ."
   },
   "repository": "",
