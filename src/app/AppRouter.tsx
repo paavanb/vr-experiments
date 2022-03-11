@@ -1,8 +1,12 @@
 import * as React from 'react'
-import {Switch} from 'react-router-dom'
+import {Route, Switch} from 'react-router-dom'
+
+import Homepage from './Homepage'
 
 export default function AppRouter(): JSX.Element {
   return (
-    <Switch />
+    <Switch>
+      <Route path="/" component={Homepage} />
+    </Switch>
   )
 }
