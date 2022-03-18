@@ -1,4 +1,4 @@
-# VR Experiments
+# VR Lab
 
 ## Running Locally
 
