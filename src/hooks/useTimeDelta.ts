@@ -17,7 +17,7 @@ export default function useTimeDelta(): (time: number) => number {
   const prevTimeRef = useRef<number | null>(null)
 
   const getDelta = (time: number): number => {
-    const delta = 0
+    let delta = 0
     if (prevTimeRef.current != null)
       delta = time - prevTimeRef.current
 
