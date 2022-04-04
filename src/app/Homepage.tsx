@@ -7,8 +7,8 @@ import {useFrame} from '@react-three/fiber'
 const PLAYER_SPEED = (delta: number): number => delta * 0.3
 const ROTATION_SPEED = (delta: number): number => delta * 0
 
-const L_THUMBSTICK_AXIS_X = 2
-const L_THUMBSTICK_AXIS_Y = 3
+const THUMBSTICK_AXIS_X = 2
+const THUMBSTICK_AXIS_Y = 3
 
 const UP_VEC = new THREE.Vector3(0, 1, 0)
 
@@ -18,9 +18,7 @@ function RotatingBox(props: JSX.IntrinsicElements.mesh): JSX.Element {
   const [clicked, setClicked] = useState(false)
 
   useFrame((_, delta) => {
-    if (ref.current)
-      ref.current.rotation.x += ROTATION_SPEED(delta)
-
+    if (ref.current) ref.current.rotation.x += ROTATION_SPEED(delta)
   })
 
   return (
@@ -28,7 +26,7 @@ function RotatingBox(props: JSX.IntrinsicElements.mesh): JSX.Element {
       {...props}
       ref={ref}
       scale={clicked ? 1.5 : 1}
-      onClick={() => setClicked(prevClicked => !prevClicked)}
+      onClick={() => setClicked((prevClicked) => !prevClicked)}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >
@@ -41,22 +39,25 @@ function RotatingBox(props: JSX.IntrinsicElements.mesh): JSX.Element {
 function Player(): JSX.Element {
   const {player} = useXR()
   const leftController = useController('left')
+  const rightController = useController('right')
 
   // Player Movement
   useFrame((_, delta) => {
-    const inputSource = leftController?.inputSource
-    const controller = leftController?.controller
-    const gamepad = inputSource?.gamepad
+    const leftGamepad = leftController?.inputSource?.gamepad
+    const rightGamepad = rightController?.inputSource?.gamepad
 
-    if (gamepad && controller) {
+    if (leftGamepad && rightGamepad && leftController && rightController) {
+      // Left thumbstick controls parallel movement, right controls perpendicular
       const thumbstickVec = new THREE.Vector3(
-        gamepad.axes[L_THUMBSTICK_AXIS_X],
+        rightGamepad.axes[THUMBSTICK_AXIS_X],
         0,
-        gamepad.axes[L_THUMBSTICK_AXIS_Y]
+        leftGamepad.axes[THUMBSTICK_AXIS_Y]
       )
 
       // We can easily grab the y-axis rotation from the Euler representation of the controller's rotation
-      const controllerEuler = new THREE.Euler(0, 0, 0, 'YXZ').setFromQuaternion(controller.quaternion)
+      const controllerEuler = new THREE.Euler(0, 0, 0, 'YXZ').setFromQuaternion(
+        leftController.controller.quaternion
+      )
       const controllerAngle = controllerEuler.y
       const movementVec = thumbstickVec.applyAxisAngle(UP_VEC, controllerAngle)
 
