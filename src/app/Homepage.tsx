@@ -1,4 +1,5 @@
 import * as React from 'react'
+import * as THREE from 'three'
 import {useRef, useState} from 'react'
 import {VRCanvas, DefaultXRControllers, useController, useXR, useXRFrame} from '@react-three/xr'
 import {useFrame} from '@react-three/fiber'
@@ -8,6 +9,8 @@ const ROTATION_SPEED = (delta: number): number => delta * 0
 
 const L_THUMBSTICK_AXIS_X = 2
 const L_THUMBSTICK_AXIS_Y = 3
+
+const UP_VEC = new THREE.Vector3(0, 1, 0)
 
 function RotatingBox(props: JSX.IntrinsicElements.mesh): JSX.Element {
   const ref = useRef<THREE.Mesh | null>(null)
@@ -46,11 +49,19 @@ function Player(): JSX.Element {
     const gamepad = inputSource?.gamepad
 
     if (gamepad && controller) {
-      const thumbstickX = gamepad?.axes[L_THUMBSTICK_AXIS_X]
-      const thumbstickY = gamepad?.axes[L_THUMBSTICK_AXIS_Y]
+      const thumbstickVec = new THREE.Vector3(
+        gamepad.axes[L_THUMBSTICK_AXIS_X],
+        0,
+        gamepad.axes[L_THUMBSTICK_AXIS_Y]
+      )
 
-      player.position.x += PLAYER_SPEED(delta) * thumbstickX
-      player.position.z += PLAYER_SPEED(delta) * thumbstickY
+      // We can easily grab the y-axis rotation from the Euler representation of the controller's rotation
+      const controllerEuler = new THREE.Euler(0, 0, 0, 'YXZ').setFromQuaternion(controller.quaternion)
+      const controllerAngle = controllerEuler.y
+      const movementVec = thumbstickVec.applyAxisAngle(UP_VEC, controllerAngle)
+
+      player.position.x += PLAYER_SPEED(delta) * movementVec.x
+      player.position.z += PLAYER_SPEED(delta) * movementVec.z
     }
   })
 
