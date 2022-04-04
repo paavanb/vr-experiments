@@ -1,13 +1,73 @@
 import * as React from 'react'
-import {VRCanvas, Hands, DefaultXRControllers} from '@react-three/xr'
+import {useRef, useState} from 'react'
+import {VRCanvas, DefaultXRControllers, useController, useXR, useXRFrame} from '@react-three/xr'
+import {useFrame} from '@react-three/fiber'
+
+const PLAYER_SPEED = (delta: number): number => delta * 0.3
+const ROTATION_SPEED = (delta: number): number => delta * 0
+
+const L_THUMBSTICK_AXIS_X = 2
+const L_THUMBSTICK_AXIS_Y = 3
+
+function RotatingBox(props: JSX.IntrinsicElements.mesh): JSX.Element {
+  const ref = useRef<THREE.Mesh | null>(null)
+  const [hovered, setHovered] = useState(false)
+  const [clicked, setClicked] = useState(false)
+
+  useFrame((_, delta) => {
+    if (ref.current)
+      ref.current.rotation.x += ROTATION_SPEED(delta)
+
+  })
+
+  return (
+    <mesh
+      {...props}
+      ref={ref}
+      scale={clicked ? 1.5 : 1}
+      onClick={() => setClicked(prevClicked => !prevClicked)}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+    </mesh>
+  )
+}
+
+function Player(): JSX.Element {
+  const {player} = useXR()
+  const leftController = useController('left')
+
+  // Player Movement
+  useFrame((_, delta) => {
+    const inputSource = leftController?.inputSource
+    const controller = leftController?.controller
+    const gamepad = inputSource?.gamepad
+
+    if (gamepad && controller) {
+      const thumbstickX = gamepad?.axes[L_THUMBSTICK_AXIS_X]
+      const thumbstickY = gamepad?.axes[L_THUMBSTICK_AXIS_Y]
+
+      player.position.x += PLAYER_SPEED(delta) * thumbstickX
+      player.position.z += PLAYER_SPEED(delta) * thumbstickY
+    }
+  })
+
+  return <></>
+}
 
 export default function Homepage(): JSX.Element {
   return (
     <VRCanvas>
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
+
+      <RotatingBox position={[-1.2, 0, 0]} />
+      <RotatingBox position={[1.2, 0, 0]} />
+
+      <Player />
       <DefaultXRControllers />
-      <Hands />
     </VRCanvas>
   )
 }

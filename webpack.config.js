@@ -19,7 +19,7 @@ module.exports = (env) => {
     plugins: [
       new webpack.EnvironmentPlugin({GIT_REV: gitInfo.sha, NODE_ENV: mode, BASE_PATH}),
       new HTMLPlugin({
-        title: 'VR Experiments',
+        title: 'VR Lab',
         meta: {
           viewport: 'minimum-scale=1, initial-scale=1, width=device-width',
         },
