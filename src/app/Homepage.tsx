@@ -6,6 +6,8 @@ import {useFrame} from '@react-three/fiber'
 
 import ControllerRelativeMovement from '../player/locomotion/ControllerRelativeMovement'
 import HybridControllerCameraRelativeMovement from '../player/locomotion/HybridControllerCameraRelativeMovement'
+import GrabAndPullMovement from '../player/locomotion/GrabAndPullMovement'
+import Effects from '../components/Effects'
 
 const ROTATION_SPEED = (delta: number): number => delta * 0
 
@@ -42,8 +44,10 @@ export default function Homepage(): JSX.Element {
       <RotatingBox position={[-1.2, 0, 0]} />
       <RotatingBox position={[1.2, 0, 0]} />
 
-      <HybridControllerCameraRelativeMovement />
+      <GrabAndPullMovement />
       <DefaultXRControllers />
+      {/* EffectComposer breaks VR mode */}
+      {/* <Effects /> */}
     </VRCanvas>
   )
 }
